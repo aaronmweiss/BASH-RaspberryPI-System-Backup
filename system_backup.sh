@@ -13,9 +13,9 @@
 #
 
 # Declare vars and set standard values
-backup_path=/home/pi/maria/
+backup_path=/home/pi/maria/worker11811
 retention_days=14
-hostname=
+hostname=worker11811
 
 # Check that we are root!
 if [[ ! $(whoami) =~ "root" ]]; then
@@ -40,13 +40,13 @@ fi
 touch /boot/forcefsck
 
 # Perform backup
-dd if=/dev/mmcblk0 of=$backup_path/$HOSTNAME.$(date +%Y%m%d).img bs=1M
+dd if=/dev/mmcblk0 of=$backup_path/$hostname.$(date +%Y%m%d).img bs=1M
 
 # Remove fsck trigger
 rm /boot/forcefsck
 
 # Delete old backups
-find $backup_path/$HOSTNAME.*.img -mtime +$retention_days -type f -delete 
+find $backup_path/$hostname.*.img -mtime +$retention_days -type f -delete 
 
 # Compress new backup
 sudo tar -c --use-compress-program=pigz -f "$backup_path/$hostname.$(date +%Y%m%d).tar.gz" "$backup_path/$hostname.$(date +%Y%m%d).img"
