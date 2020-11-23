@@ -13,8 +13,9 @@
 #
 
 # Declare vars and set standard values
-backup_path=/mnt/backup
-retention_days=3
+backup_path=/home/pi/maria/
+retention_days=14
+hostname=
 
 # Check that we are root!
 if [[ ! $(whoami) =~ "root" ]]; then
@@ -46,3 +47,10 @@ rm /boot/forcefsck
 
 # Delete old backups
 find $backup_path/$HOSTNAME.*.img -mtime +$retention_days -type f -delete 
+
+# Compress new backup
+sudo tar -c --use-compress-program=pigz -f "$backup_path/$hostname.$(date +%Y%m%d).tar.gz" "$backup_path/$hostname.$(date +%Y%m%d).img"
+
+# Delete new .img and .tar.gz files past retention_days
+sudo rm "$backup_path/$hostname.$(date +%Y%m%d).img"
+find $backup_path/$hostname.*.tar.gz -mtime +$retention_days -type f -delete
